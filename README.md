@@ -1,6 +1,6 @@
 # ouranos-eurydice
-Pratical project for the discipline of Web Development
 
+Pratical project for the discipline of Web Development
 
 ## Getting Started
 
