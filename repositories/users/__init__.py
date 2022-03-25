@@ -1,15 +1,20 @@
-class UsersRepository:
+from repositories import SingletonMeta
+
+class UsersRepository(metaclass=SingletonMeta):
     def __init__(self, data = []):
         self.data = data
     
-    def Insert(self, user):
+    def Put(self, user):
         user.type = type(user)
         self.data.append(user)
 
     def FindIndex(self, cpf):
         return self.data.index(lambda x: x.cpf == cpf)
+
+    def GetItem(self, id):
+        return {}
     
-    def Delete(self, cpf):
+    def Remove(self, cpf):
         userIndex = self.FindIndex(cpf)
         self.data.pop(userIndex)
 
