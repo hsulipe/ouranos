@@ -1,4 +1,4 @@
-# ouranos-eurydice
+# ouranos
 
 Pratical project for the discipline of Web Development
 
