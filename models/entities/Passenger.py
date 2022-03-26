@@ -1,4 +1,4 @@
-import User
+from .User import User
 
 class Passenger(User):
     def __init__ (
