@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, request, abort
+from flask_cors import CORS
 from functools import reduce
 
 from .repositories.UsersRepository import UsersRepository
@@ -14,6 +15,7 @@ from .models.entities.Transport import Transport
 from .models.enums.VehicleTypes import VehicleTypesEnum
 
 app = Flask(__name__)
+CORS(app)
 
 user_repo = UsersRepository()
 vehicle_repo = VehiclesRepository()
