@@ -17,8 +17,8 @@ class User:
         repo: UsersRepository
     ):
         self.type = type(self)
-        if repo == None or repo.exists(self.cpf):
+        if repo == None or repo.Exists(self.document):
             return False
         
-        repo.Insert(self)
+        repo.Put(self)
         return self

@@ -1,11 +1,11 @@
 from .SingletonMeta import SingletonMeta
 
-class RepositoryBase(SingletonMeta):
+class RepositoryBase(metaclass=SingletonMeta):
     def __init__(self, data = []):
         self.data = data
 
     def Exists(self, id):
-        return self.FindIndex(id) < 0 
+        return self.FindIndex(id) >= 0 
     
     def FindIndex(self, id):
         return self.data.index(lambda x: x.id == id)

@@ -1,17 +1,17 @@
 from flask import Flask, jsonify, request, abort
 from functools import reduce
 
-from repositories.UsersRepository import UsersRepository
-from repositories.VehiclesRepository import VehiclesRepository
-from repositories.TransportRepository import TransportRepository
+from .repositories.UsersRepository import UsersRepository
+from .repositories.VehiclesRepository import VehiclesRepository
+from .repositories.TransportRepository import TransportRepository
 
-from models.entities.Admin import Admin
-from models.entities.Driver import Driver
-from models.entities.Passenger import Passenger
-from models.entities.Vehicle import Vehicle
-from models.entities.Transport import Transport
+from .models.entities.Admin import Admin
+from .models.entities.Driver import Driver
+from .models.entities.Passenger import Passenger
+from .models.entities.Vehicle import Vehicle
+from .models.entities.Transport import Transport
 
-from models.enums.VehicleTypes import VehicleTypesEnum
+from .models.enums.VehicleTypes import VehicleTypesEnum
 
 app = Flask(__name__)
 

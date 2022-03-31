@@ -26,5 +26,5 @@ class Vehicle:
         if vehicleRepo == None or vehicleRepo.Exists(self.plate) or not userRepo.Exists(self.drivers_document):
             return False
         
-        vehicleRepo.Insert(self)
+        vehicleRepo.Put(self)
         
