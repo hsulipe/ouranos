@@ -6,4 +6,11 @@ Pratical project for the discipline of Web Development
 
 Run the following command to run the server.
 
-`FLASK_APP=app.py FLASK_ENV=development flask run`
+`FLASK_ENV=development flask run`
+
+on Windows
+
+``` powershell
+$env:FLASK_ENV="development"
+flask run
+```

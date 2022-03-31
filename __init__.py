@@ -1,12 +1,23 @@
 from flask import Flask, jsonify, request, abort
-from ouranos.repositories.UsersRepository import UsersRepository
-from ouranos.models.entities.Admin import Admin
-from ouranos.models.entities.Driver import Driver
-from ouranos.models.entities.Passenger import Passenger
+from functools import reduce
+
+from repositories.UsersRepository import UsersRepository
+from repositories.VehiclesRepository import VehiclesRepository
+from repositories.TransportRepository import TransportRepository
+
+from models.entities.Admin import Admin
+from models.entities.Driver import Driver
+from models.entities.Passenger import Passenger
+from models.entities.Vehicle import Vehicle
+from models.entities.Transport import Transport
+
+from models.enums.VehicleTypes import VehicleTypesEnum
 
 app = Flask(__name__)
 
 user_repo = UsersRepository()
+vehicle_repo = VehiclesRepository()
+transport_repo = TransportRepository()
 
 @app.post("/login")
 def login():
@@ -41,7 +52,10 @@ def register():
         password=user_data['password']
     )
 
-    user_repo.Put(admin_user)
+    result = admin_user.Register(user_repo)
+
+    if not result:
+        abort(409, description="Admin already registered") 
 
     return jsonify({
         "name": admin_user.name,
@@ -62,7 +76,10 @@ def register_driver():
         address=driver_data['address'],
     )
 
-    user_repo.Put(driver)
+    result = driver.Register(user_repo)
+
+    if not result:
+        abort(409, description="Admin already registered") 
 
     return jsonify({
         "name": driver.name,
@@ -83,7 +100,10 @@ def register_passengers():
         state=passengers_data['state']
     )
 
-    user_repo.Put(passengers)
+    result = passengers.Register(user_repo)
+
+    if not result:
+        abort(409, description="Admin already registered") 
 
     return jsonify({
         "name": passengers.name,
@@ -94,15 +114,75 @@ def register_passengers():
         "state": passengers.state
     })
 
-@app.get("/")
-def hello_world():
-    return "<p>Hello, World!</p>"
-
 @app.post("/vehicles")
 def register_vehicles():
     vehicles_data = request.json
+    vehicles = Vehicle(
+        plate=vehicles_data['plate'], 
+        type=VehicleType[vehicles_data['type']], 
+        model=vehicles_data['model'], 
+        year=vehicles_data['year'],
+        num_passengers=vehicles_data['num_passengers'],
+        drivers_document=vehicles_data['drivers_document']
+    )
 
-    return {}    
+    result = vehicles.Register(user_repo, vehicle_repo)
+
+    if not result:
+        abort(409, description="Admin already registered") 
+
+    return jsonify({
+        "plate": vehicles.plate,
+        "type": vehicles.type,
+        "model": vehicles.model,
+        "year": vehicles.year,
+        "num_passengers": vehicles.num_passengers,
+        "drivers_document": vehicles.drivers_document
+    })
+
+@app.post("/transports")
+def register_transports():
+    transports_data = request.json
+    transport = Transport(
+        plate=transports_data['plate'], 
+        type=VehicleTypesEnum[transports_data['type']], 
+        model=transports_data['model'], 
+        year=transports_data['year'],
+        num_passengers=transports_data['num_passengers'],
+        drivers_document=transports_data['drivers_document']
+    )
+
+    result = transport.Register(user_repo, vehicle_repo)
+
+    if not result:
+        abort(409, description="Admin already registered") 
+
+    
+    return jsonify({
+        "plate": transport.plate,
+        "type": transport.type,
+        "model": transport.model,
+        "year": transport.year,
+        "num_passengers": transport.num_passengers,
+        "drivers_document": transport.drivers_document
+    })
+
+@app.get('/financial_reports')
+def get_financial_reports():
+    financial_report_data = request.json
+
+    transports = transport_repo.Query(
+        lambda transport: transport.datetime >= financial_report_data.start_date 
+            and transport.datetime <= financial_report_data.end_date
+    )
+
+    if not transports:
+        abort(404, description="Not Found")
+
+    return jsonify({
+        "total_value": reduce(lambda a, b: a + b.value, transports),
+        "quantity": len(transports),
+    })
 
 if __name__ == "__main__":
     app.run(debug=True)

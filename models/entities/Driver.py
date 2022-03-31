@@ -1,12 +1,12 @@
 from .User import User
-
+from datetime import date
 class Driver(User):
     def __init__ (
         self, 
-        name, 
-        birthdate, 
-        document, 
-        address
+        name: str, 
+        birthdate: date, 
+        document: str, 
+        address: str
     ):
         super().__init__(
             name, 
