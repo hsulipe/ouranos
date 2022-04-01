@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request, abort
 from flask_cors import CORS
 from functools import reduce
+from datetime import datetime
 
 from .repositories.UsersRepository import UsersRepository
 from .repositories.VehiclesRepository import VehiclesRepository
@@ -51,7 +52,7 @@ def register():
     user_data = request.json
     admin_user = Admin(
         name=user_data['name'], 
-        birthdate=user_data['birthdate'], 
+        birthdate=datetime.strptime(user_data['birthdate'], '%Y-%m-%d'), 
         document=user_data['document'], 
         address=user_data['address'],
         login=user_data['login'],
@@ -77,7 +78,7 @@ def register_driver():
     driver_data = request.json
     driver = Driver(
         name=driver_data['name'], 
-        birthdate=driver_data['birthdate'], 
+        birthdate=datetime.strptime(driver_data['birthdate'], "%Y-%m-%d"), 
         document=driver_data['document'], 
         address=driver_data['address'],
     )
@@ -99,7 +100,7 @@ def register_passengers():
     passengers_data = request.json
     passengers = Passenger(
         name=passengers_data['name'], 
-        birthdate=passengers_data['birthdate'], 
+        birthdate=datetime.strptime(passengers_data['birthdate'], "%Y-%m-%d"), 
         document=passengers_data['document'], 
         address=passengers_data['address'],
         city=passengers_data['city'],
@@ -125,7 +126,7 @@ def register_vehicles():
     vehicles_data = request.json
     vehicles = Vehicle(
         plate=vehicles_data['plate'], 
-        type=VehicleTypesEnum[vehicles_data['type']], 
+        type=str(VehicleTypesEnum[vehicles_data['type']]), 
         model=vehicles_data['model'], 
         year=vehicles_data['year'],
         num_passengers=vehicles_data['num_passengers'],
@@ -152,7 +153,7 @@ def register_transports():
     transport = Transport(
         vehicle_plate=transports_data['vehicle_plate'], 
         passenger_document=transports_data['passenger_document'], 
-        datetime=transports_data['datetime'], 
+        datetime=datetime.strptime(transports_data['datetime'], "%Y-%m-%d"), 
         distance_in_km=transports_data['distance_in_km'],
         value=transports_data['value']
     )
@@ -174,10 +175,11 @@ def register_transports():
 @app.get('/financial_reports')
 def get_financial_reports():
     financial_report_data = request.args.to_dict()
-
+    start_date = datetime.strptime(financial_report_data['start_date'], "%Y-%m-%d")
+    end_date = datetime.strptime(financial_report_data['end_date'], "%Y-%m-%d")
     transports = transport_repo.Query(
-        lambda transport: transport.datetime >= financial_report_data.start_date 
-            and transport.datetime <= financial_report_data.end_date
+        lambda transport: transport.datetime >= start_date 
+            and transport.datetime <= end_date
     )
 
     if not transports:
