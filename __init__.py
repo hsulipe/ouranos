@@ -131,8 +131,8 @@ def register_vehicles():
         plate=vehicles_data['plate'], 
         type=str(VehicleTypesEnum[vehicles_data['type']]), 
         model=vehicles_data['model'], 
-        year=vehicles_data['year'],
-        num_passengers=vehicles_data['num_passengers'],
+        year=int(vehicles_data['year']),
+        num_passengers=int(vehicles_data['num_passengers']),
         drivers_document=vehicles_data['drivers_document']
     )
 
@@ -157,8 +157,8 @@ def register_transports():
         vehicle_plate=transports_data['vehicle_plate'], 
         passenger_document=transports_data['passenger_document'], 
         datetime=datetime.strptime(transports_data['datetime'], "%Y-%m-%d"), 
-        distance_in_km=transports_data['distance_in_km'],
-        value=transports_data['value']
+        distance_in_km=int(transports_data['distance_in_km']),
+        value=float(transports_data['value'])
     )
 
     result = transport.Register(user_repo, vehicle_repo, transport_repo)
@@ -178,8 +178,10 @@ def register_transports():
 @app.get('/financial_reports')
 def get_financial_reports():
     financial_report_data = request.args.to_dict()
+
     start_date = datetime.strptime(financial_report_data['start_date'], "%Y-%m-%d")
     end_date = datetime.strptime(financial_report_data['end_date'], "%Y-%m-%d")
+
     transports = transport_repo.Query(
         lambda transport: transport.datetime >= start_date 
             and transport.datetime <= end_date
@@ -187,12 +189,17 @@ def get_financial_reports():
 
     if not transports:
         return jsonify({
-        "total_value": 0.0,
-        "quantity": 0,
-    })
+            "total_value": 0.0,
+            "quantity": 0,
+        })
 
+    sum = 0
+    for i in range(len(transports)):
+        sum = sum + transports[i].value
+
+    # reduce(lambda a, b: a + b.value, transports, 0)
     return jsonify({
-        "total_value": reduce(lambda a, b: a + b.value, transports),
+        "total_value": sum,
         "quantity": len(transports),
     })
 
