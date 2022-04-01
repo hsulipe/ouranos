@@ -26,7 +26,7 @@ class Vehicle:
         if vehicleRepo == None or vehicleRepo.Exists(self.plate):
             return False
         
-        if len(userRepo.Query(lambda user: user.document == self.driver_document and user.type == "Driver")) == 0:
+        if len(userRepo.Query(lambda user: user.document == self.drivers_document and user.type == "Driver")) == 0:
             return False
         
         vehicleRepo.Put(self)

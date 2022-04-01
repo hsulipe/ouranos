@@ -14,5 +14,5 @@ class Driver(User):
             document, 
             address
         )
-        self.type = "Admin"
+        self.type = "Driver"
         
