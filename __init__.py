@@ -21,6 +21,10 @@ user_repo = UsersRepository()
 vehicle_repo = VehiclesRepository()
 transport_repo = TransportRepository()
 
+@app.get("/")
+def hello():
+    return "Hello World"
+
 @app.post("/login")
 def login():
     admin_data = request.json
@@ -121,7 +125,7 @@ def register_vehicles():
     vehicles_data = request.json
     vehicles = Vehicle(
         plate=vehicles_data['plate'], 
-        type=VehicleType[vehicles_data['type']], 
+        type=VehicleTypesEnum[vehicles_data['type']], 
         model=vehicles_data['model'], 
         year=vehicles_data['year'],
         num_passengers=vehicles_data['num_passengers'],
@@ -135,7 +139,7 @@ def register_vehicles():
 
     return jsonify({
         "plate": vehicles.plate,
-        "type": vehicles.type,
+        "type": str(vehicles.type),
         "model": vehicles.model,
         "year": vehicles.year,
         "num_passengers": vehicles.num_passengers,
@@ -146,32 +150,30 @@ def register_vehicles():
 def register_transports():
     transports_data = request.json
     transport = Transport(
-        plate=transports_data['plate'], 
-        type=VehicleTypesEnum[transports_data['type']], 
-        model=transports_data['model'], 
-        year=transports_data['year'],
-        num_passengers=transports_data['num_passengers'],
-        drivers_document=transports_data['drivers_document']
+        vehicle_plate=transports_data['vehicle_plate'], 
+        passenger_document=transports_data['passenger_document'], 
+        datetime=transports_data['datetime'], 
+        distance_in_km=transports_data['distance_in_km'],
+        value=transports_data['value']
     )
 
-    result = transport.Register(user_repo, vehicle_repo)
+    result = transport.Register(user_repo, vehicle_repo, transport_repo)
 
     if not result:
         abort(409, description="Admin already registered") 
 
     
     return jsonify({
-        "plate": transport.plate,
-        "type": transport.type,
-        "model": transport.model,
-        "year": transport.year,
-        "num_passengers": transport.num_passengers,
-        "drivers_document": transport.drivers_document
+        "vehicle_plate": transport.vehicle_plate,
+        "passenger_document": transport.passenger_document,
+        "datetime": transport.datetime,
+        "distance_in_km": transport.distance_in_km,
+        "value": transport.value
     })
 
 @app.get('/financial_reports')
 def get_financial_reports():
-    financial_report_data = request.json
+    financial_report_data = request.args.to_dict()
 
     transports = transport_repo.Query(
         lambda transport: transport.datetime >= financial_report_data.start_date 
@@ -179,7 +181,10 @@ def get_financial_reports():
     )
 
     if not transports:
-        abort(404, description="Not Found")
+        return jsonify({
+        "total_value": 0.0,
+        "quantity": 0,
+    })
 
     return jsonify({
         "total_value": reduce(lambda a, b: a + b.value, transports),

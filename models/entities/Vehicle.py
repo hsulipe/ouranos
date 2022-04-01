@@ -27,4 +27,6 @@ class Vehicle:
             return False
         
         vehicleRepo.Put(self)
+
+        return self
         

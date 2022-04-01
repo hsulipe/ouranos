@@ -27,7 +27,8 @@ class Transport:
         if vehicle_repo == None or user_repo == None or transport_repo == None:
             return False
         
-        if vehicle_repo.Exists(self.vehicle_plate) or not user_repo.Exists(self.passenger_document):
+        if not vehicle_repo.Exists(self.vehicle_plate) or not user_repo.Exists(self.passenger_document):
             return False
         
-        vehicle_repo.Put(self)
+        transport_repo.Put(self)
+        return self

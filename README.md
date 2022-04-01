@@ -11,7 +11,7 @@ Run the following command to run the server.
 on Windows
 
 ``` powershell
-$env:FLASK_APP=__init__.py
+$env:FLASK_APP="__init__.py"
 $env:FLASK_ENV="development"
 flask run
 ```
