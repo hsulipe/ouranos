@@ -32,6 +32,6 @@ class Transport:
 
         if len(user_repo.Query(lambda user: user.document == self.passenger_document and user.type == 'Passenger')) == 0:
             return False
-            
+
         transport_repo.Put(self)
         return self
