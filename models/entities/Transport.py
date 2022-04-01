@@ -27,8 +27,11 @@ class Transport:
         if vehicle_repo == None or user_repo == None or transport_repo == None:
             return False
         
-        if not vehicle_repo.Exists(self.vehicle_plate) or not user_repo.Exists(self.passenger_document):
+        if not vehicle_repo.Exists(self.vehicle_plate):
             return False
-        
+
+        if user_repo.Query(lambda user: user.document == self.passenger_document and user.type == 'Passenger'):
+            return False
+            
         transport_repo.Put(self)
         return self

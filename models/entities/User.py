@@ -1,4 +1,5 @@
 from datetime import date
+
 from ...repositories.UsersRepository import UsersRepository
 class User:
     def __init__(
@@ -16,7 +17,6 @@ class User:
         self, 
         repo: UsersRepository
     ):
-        self.type = type(self)
         if repo == None or repo.Exists(self.document):
             return False
         

@@ -66,6 +66,7 @@ def register():
 
     return jsonify({
         "name": admin_user.name,
+        "type": admin_user.type, 
         "birthdate": admin_user.birthdate,
         "document": admin_user.document,
         "address": admin_user.address,
@@ -90,6 +91,7 @@ def register_driver():
 
     return jsonify({
         "name": driver.name,
+        "type": driver.type,
         "birthdate": driver.birthdate,
         "document": driver.document,
         "address": driver.address,
@@ -114,6 +116,7 @@ def register_passengers():
 
     return jsonify({
         "name": passengers.name,
+        "type": passengers.type,
         "birthdate": passengers.birthdate,
         "document": passengers.document,
         "address": passengers.address,

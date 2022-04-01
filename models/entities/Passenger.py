@@ -18,7 +18,7 @@ class Passenger(User):
             document, 
             address
         )
-        
+        self.type = "Passenger"
         self.city = city
         self.state = state
         

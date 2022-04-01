@@ -16,5 +16,6 @@ class Admin(User):
             document, 
             address
         )
+        self.type = "Admin"
         self.login = login
         self.password = password

@@ -23,7 +23,10 @@ class Vehicle:
         userRepo: UsersRepository,
         vehicleRepo: VehiclesRepository 
     ):
-        if vehicleRepo == None or vehicleRepo.Exists(self.plate) or not userRepo.Exists(self.drivers_document):
+        if vehicleRepo == None or vehicleRepo.Exists(self.plate):
+            return False
+        
+        if len(userRepo.Query(lambda user: user.document == self.driver_document and user.type == "Driver")) == 0:
             return False
         
         vehicleRepo.Put(self)
